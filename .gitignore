@@ -1,0 +1,30 @@
+# Go 빌드 산출물
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+/bin/
+/dist/
+
+# 테스트/커버리지
+*.test
+*.out
+coverage.html
+
+# 환경 변수 (예시 파일만 커밋: .env.example)
+.env
+.env.local
+
+# 로컬 DB 볼륨 (docker compose)
+/pgdata/
+*.db
+
+# 에디터/OS
+.DS_Store
+.vscode/
+.idea/
+
+# Go workspace
+go.work
+go.work.sum

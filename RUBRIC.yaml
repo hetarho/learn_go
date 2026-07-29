@@ -1,0 +1,127 @@
+version: 1
+created: 2026-07-29
+sources: REFERENCES.md   # 리서치 출처 28개, 전부 URL 검증됨
+
+# ── A. 코드 채점: 모든 실습 산출물에 적용 ─────────────────────
+code_review:
+  scale: "1=치명적 결함 / 2=동작하나 관용적이지 않음 / 3=합격선 / 4=관용적 / 5=목표 코드베이스 수준"
+  dimensions:
+    - id: correctness
+      name: 정확성
+      weight: 25
+      checks:
+        - 요구사항과 테스트를 모두 만족한다
+        - "경계 케이스(빈 값, nil, zero value)를 처리한다"
+        - "go vet / gofmt -l 이 깨끗하다"
+      red_flags: ["테스트를 통과시키기 위한 하드코딩", "에러를 _ 로 버림"]
+      rationale: "Code Review Comments(A2): 에러를 _로 버리지 말 것. Effective Go(A1): Always check error returns."
+      refs: [A1, A2]
+    - id: go_idiom
+      name: Go 관용성
+      weight: 20
+      checks:
+        - "짧은 변수명, 짧은 인터페이스, 얕은 중첩(early return)"
+        - 값/포인터 리시버 선택에 이유가 있다
+        - "getter에 Get 접두사 안 붙임, 패키지명 중복 안 함(journal.JournalService ✗)"
+        - 표준 라이브러리로 되는 것을 직접 만들지 않는다
+        - "인터페이스는 필요해질 때 소비처에서 만든다 — 선제적 인터페이스 금지(A4)"
+      red_flags: ["불필요한 goroutine/channel", "iota 사용", "reflection", "getter/setter 남발", "panic으로 흐름 제어", "util/common/helpers 패키지(B7)", "사용처가 하나뿐인 선제적 인터페이스"]
+      rationale: "Effective Go(A1) naming + Go Proverbs(A3) 'The bigger the interface, the weaker the abstraction' / 'Clear is better than clever' / 'Don't panic'. 리시버 기준은 A2(변경·mutex·큰 struct → 포인터)."
+      refs: [A1, A2, A3, A4, A11, B7]
+    - id: error_handling
+      name: 에러 처리
+      weight: 20
+      checks:
+        - "도메인 에러는 패키지 레벨 sentinel로 정의 (Err 접두사, Uber A5)"
+        - "%w 로 래핑하고 컨텍스트 문장을 붙인다(중복 없이 — 'failed to' 남발 금지, A6)"
+        - "errors.Is / errors.As 를 올바르게 구분해 쓴다"
+        - "같은 에러를 로그와 반환 양쪽에서 처리하지 않는다 (handle errors once, A5)"
+      red_flags: ["err.Error() 문자열 비교", "%v 래핑(체인 단절)", "에러 삼킴", "에러 메시지 대문자 시작·마침표(A2)"]
+      rationale: "go1.13-errors(A7): %w는 Unwrap 체인을 만들고 wrap 여부는 API 설계 결정. 이 코드베이스는 sentinel 체인을 의도적으로 API로 취급(errors.Is 400곳) — 충돌 노트 참조."
+      refs: [A2, A5, A6, A7]
+    - id: boundaries
+      name: 경계와 의존성 방향
+      weight: 15
+      checks:
+        - 도메인이 pgx/sqlc/proto/connect를 import하지 않는다
+        - "인터페이스를 소비자 패키지가 선언한다 (Cockburn B1: port는 application이 선언)"
+        - "구체 타입 조립이 composition root에만 있다 (Seemann B9)"
+        - "ctx 가 첫 파라미터다 (A8)"
+        - "config는 env로, 로그는 stdout으로 (12-factor B10)"
+      red_flags: ["sqlc 행 타입이나 proto 타입이 서비스 시그니처에 등장", "구현체 패키지가 소비자를 import", "전역 변수로 의존성 공유", "context.Value로 옵션 파라미터 전달(A8)", "하드코딩된 secret(B10)"]
+      rationale: "The Dependency Rule(B2): 의존성은 항상 안쪽으로. Ben Johnson(B7): 도메인 타입은 의존성 없는 패키지에. 단 레이어 수 자체는 가점 요소가 아님(B3 비판론)."
+      refs: [A8, B1, B2, B3, B7, B9, B10]
+    - id: testability
+      name: 테스트 가능성과 테스트 품질
+      weight: 15
+      checks:
+        - "시간·ID·랜덤이 주입되어 결정론적이다"
+        - "테이블 주도 테스트로 케이스를 나열한다 (A9: t.Run + 케이스 이름으로 실패 식별)"
+        - "fake는 port만큼만 구현하고 상태를 갖는다 (A10: mock보다 fake)"
+        - "실패 메시지가 got/want를 보여준다"
+        - "helper는 t.Helper()를 호출한다 (A10)"
+      red_flags: ["time.Now() 직접 호출", "테스트가 순서에 의존", "assert 없는 테스트", "goroutine 안 t.Fatal(A10)"]
+      rationale: "TableDrivenTests(A9) + Google Best Practices(A10). Go 1.22+라 tt := tt 캡처는 요구하지 않음(구버전 지식으로만)."
+      refs: [A9, A10]
+    - id: readability
+      name: 가독성과 네이밍
+      weight: 5
+      checks: ["exported 심볼에 해당 이름으로 시작하는 주석(A2)", "이름이 의도를 말한다", "파일 하나의 책임이 하나다"]
+      refs: [A1, A2]
+  pass_rule:
+    weighted_min: 3.5      # 가중 평균
+    no_dimension_below: 3  # 어떤 축도 3 미만이면 불통과
+    on_fail: "해당 축을 재작업하게 한다. 2회 재작업에도 3 미만이면 PROGRESS.md 약점 등록 + 이전 레슨 복습."
+
+# ── B. 이해도 채점: 체크 질문에 적용 ──────────────────────────
+comprehension:
+  levels:
+    0: "모른다"
+    1: "암기 — 용어는 말하지만 이유를 못 댄다"
+    2: "설명 — 왜 그렇게 하는지, 안 하면 뭐가 깨지는지 말한다"
+    3: "전이 — 처음 보는 코드에서 알아보고, 다른 상황에 적용한다"
+  pass_rule:
+    all_questions_min: 2
+    core_questions_min: 3   # 커리큘럼 "깊게" 항목(인터페이스·에러 3층·context·클로저 DI·생성자·가시성)에 해당하는 질문
+    on_fail: "다른 각도의 예제로 재설명 → 재질문. 같은 세션 2회 실패면 다음 레슨으로 넘어가지 않는다."
+
+# ── C. Phase 게이트 ─────────────────────────────────────────
+phase_gate:
+  rule: "Phase 마지막 레슨 후, 그 Phase 전체 레슨의 코드 점수 평균 3.5 이상 + 이해도 미해결 약점 2개 이하일 때만 다음 Phase로."
+  on_fail: "약점 태그별로 미니 과제 1개씩 출제해 해소 후 진행."
+
+# ── D. 졸업 판정 ────────────────────────────────────────────
+graduation:
+  requires:
+    - "L01~L40 전부 통과"
+    - "캡스톤이 go build ./... / go vet ./... / go test ./... 전부 통과"
+    - "L40 코드 리딩 시험에서 졸업 체크리스트(PROGRESS.md 하단) 전 항목 O"
+  partial: "X가 1~3개면 해당 항목의 원 레슨으로 되돌아가 재시험. 4개 이상이면 해당 Phase 재수강."
+
+# ── E. 채점 운영 규칙 ────────────────────────────────────────
+process:
+  - "점수는 반드시 근거와 함께 제시한다: 축 이름 + 점수 + 코드의 해당 줄 + 왜."
+  - "지적은 수정 코드가 아니라 질문으로 던진다: '이 줄에서 err이 nil이면 어떻게 되지?'"
+  - "5점을 남발하지 않는다. 초심자 단계 3~4가 정상이다."
+  - "잘한 점을 최소 1개 구체적으로 말한다."
+  - "모든 점수를 PROGRESS.md 표와 JOURNAL.md 로그에 기록한다."
+
+# ── F. 도메인별 채점 보강 (Phase 4~5 레슨에 추가 적용) ──────────
+domain_checks:
+  db:  # L24~L29
+    - "풀은 프로세스당 하나 공유, MaxConns에 근거가 있다(C6: 작은 풀이 빠르다, core 기반 산정)"
+    - "Acquire 후 반드시 Release, 긴 트랜잭션 금지(C2)"
+    - "목록 API는 keyset: deterministic sort + unique tiebreaker + 대응 인덱스(C5)"
+    - "멱등 insert: unique constraint + ON CONFLICT, 외부 호출은 트랜잭션 밖(C4)"
+    - "모든 마이그레이션에 동작하는 Down, 생성 코드·과거 마이그레이션 사후 수정 금지(C9, C10)"
+  auth:  # L23, L38
+    - "alg/exp 검증 없이 토큰을 신뢰하지 않는다(C7: alg confusion)"
+    - "JWKS는 TTL 캐시, 모르는 kid → 캐시 무효화 후 재조회(C7)"
+    - "stateless의 대가(즉시 revocation 불가)를 설명할 수 있다"
+  jobqueue:  # L33~L34, L39
+    - "claim은 SELECT ... FOR UPDATE SKIP LOCKED + 같은 트랜잭션에서 상태 변경(C1)"
+    - "잡 처리(외부 호출)는 claim 트랜잭션 밖 — lease/locked_until로 소유권(C2)"
+    - "fence 토큰: 단조 증가 + storage가 낮은 토큰의 write 거부(C3)"
+    - "백오프에 상한과 max_attempts, 초과 시 dead-letter"
+  shutdown:  # L22, L38
+    - "signal → srv.Shutdown(ctx with timeout) → ErrServerClosed는 에러 아님 → Shutdown 완료 대기 후 리소스 정리(C8)"

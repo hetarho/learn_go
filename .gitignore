@@ -28,3 +28,9 @@ coverage.html
 # Go workspace
 go.work
 go.work.sum
+
+# 웹 뷰어 (학습 보조 도구, web/)
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo

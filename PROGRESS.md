@@ -17,7 +17,10 @@
 - **주의**: 없음
 
 ## ⏸ 진행 중 (세션이 중간에 끊긴 경우만 채움)
-- 없음
+- L01 과제 명세 제시됨. 테스트 파일 작성됨: `lessons/01-hello/greet/greet_test.go`
+- 학습자가 구현할 것: `lessons/01-hello/greet/greet.go` (Hello + unexported decorate) + `lessons/01-hello/main.go`
+- 완료 조건: `go test ./lessons/01-hello/...` 통과 + `go run ./lessons/01-hello` 실행
+- 다음: 학습자 구현 → 검증 → 채점 → unexported/internal 실험 → 이해도 체크
 
 ## 레슨 진행표
 상태: ⬜미시작 / 🔄진행중 / ✅통과 / 🔁재작업필요

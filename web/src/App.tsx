@@ -1,6 +1,17 @@
 import { useEffect, useState } from 'react'
-import { docs, lessonBySlug, lessons, phases, section, stats, type Lesson, type Status } from './content'
-import { Markdown, stripFrontmatter, useToc } from './markdown'
+import {
+  docs,
+  lessonBySlug,
+  lessons,
+  phases,
+  section,
+  stats,
+  stripFrontmatter,
+  type Lesson,
+  type Status,
+} from './content'
+import { Markdown } from './markdown'
+import { useToc } from './markdown-parse'
 
 // ── 라우팅: 해시만 쓴다 (라우터 라이브러리 없이) ───────────────────
 type Route = { view: 'home' } | { view: 'lesson'; slug: string } | { view: 'doc'; name: DocName }

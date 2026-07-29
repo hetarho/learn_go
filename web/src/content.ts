@@ -159,6 +159,18 @@ export const stats = (() => {
   }
 })()
 
+/** LESSON.md 앞머리의 `--- … ---` 블록을 떼어낸다. */
+export function stripFrontmatter(src: string): { meta: Record<string, string>; body: string } {
+  const m = /^---\n([\s\S]*?)\n---\n?/.exec(src)
+  if (!m) return { meta: {}, body: src }
+  const meta: Record<string, string> = {}
+  for (const line of m[1].split('\n')) {
+    const kv = /^(\w+):\s*(.*)$/.exec(line)
+    if (kv) meta[kv[1]] = kv[2].trim().replace(/^["']|["']$/g, '')
+  }
+  return { meta, body: src.slice(m[0].length) }
+}
+
 /** PROGRESS.md 의 특정 `## 제목` 섹션 본문만 잘라낸다. */
 export function section(md: string, heading: string): string {
   const lines = md.split('\n')

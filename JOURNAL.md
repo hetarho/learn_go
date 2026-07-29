@@ -49,7 +49,11 @@
 
 ### 검증
 - `pnpm typecheck` / `pnpm build` 통과. 파서를 실제 파일로 검증: 40레슨·7 Phase 전부 파싱, `:::check` 안의 `:::details` 중첩 정상, `:::compare` 2열 분리 정상.
-- 개선 2건: `:::compare` 안의 `### Go` 같은 헤딩이 문서 TOC에 섞이던 것 제외, 콜아웃 제목의 백틱을 `<code>`로 렌더.
+- 개선 3건:
+  - `:::compare` 안의 `### Go` 같은 헤딩이 문서 TOC에 섞이던 것 제외
+  - 콜아웃 제목의 백틱을 `<code>`로 렌더
+  - dev 서버 로그에 `Could not Fast Refresh ("stripFrontmatter" export is incompatible)`가 반복 출력됨 → 파싱(`markdown-parse.ts`)과 렌더링(`markdown.tsx`)을 분리해 해결. 렌더 모듈이 컴포넌트만 export하게 되니 경계가 깨끗해졌다. 마침 우리가 가르치려는 관심사 분리와 같은 모양이라 구조도 나아졌다.
+  - 검증 방법: dev 서버가 변환해 내려주는 모듈을 받아 `registerExportsForReactRefresh` 주입 여부를 확인했다. `markdown.tsx` / `App.tsx` 둘 다 경계 ✓, 로그 경고 0건.
 
 ### 다음에 이어갈 것
 - L01 학습자 구현 대기 중. 제출되면 `gofmt -l` → `go vet` → `go test` 순으로 검증하고 6축 채점.

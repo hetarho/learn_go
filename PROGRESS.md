@@ -10,20 +10,23 @@
 | 누적 코드 점수 평균 | - |
 | 총 학습 시간 | 0h |
 
-## ▶ 다음 세션 시작점
+## 다음 세션 시작점
 - **먼저 읽기**: `TUTOR.md` — 말투 지침(한국 테크블로그 톤)과 `LESSON.md` 작성 형식. **레슨 본문은 채팅이 아니라 `lessons/NN-slug/LESSON.md`에 쓴다.**
 - **레슨**: L01 · Go 툴체인, 모듈, 패키지와 가시성 (`lessons/01-hello/`)
 - **첫 할 일**: 학습자가 `pnpm dev`로 L01 레슨을 읽고 구현 중. 구현 제출되면 검증 → 채점.
 - **준비 명령**: `pnpm dev` (레슨 뷰어), `go build ./...`
 - **주의**: 학습자가 "번역 말투는 이해가 안 된다"고 피드백함 → `TUTOR.md` §1 준수
 
-## ⏸ 진행 중 (세션이 중간에 끊긴 경우만 채움)
+## 진행 중 (세션이 중간에 끊긴 경우만 채움)
 - L01 레슨 본문 + 과제 명세 + 테스트 파일까지 완료.
   - 본문: `lessons/01-hello/LESSON.md`
   - 명세용 테스트: `lessons/01-hello/greet/greet_test.go`
 - 학습자가 구현할 것: `lessons/01-hello/greet/greet.go` (`Hello` + unexported `decorate`) + `lessons/01-hello/main.go`
 - 완료 조건: `go test ./lessons/01-hello/...` 통과 + `go run ./lessons/01-hello` 실행
-- 다음: 학습자 구현 → 검증(`gofmt -l` → `go vet` → `go test`) → 채점 → `:::try` internal 실험 → 이해도 체크 3문항
+- **레슨 구조 개편(2026-07-30)**: 개념 5개에 실습이 없어 맨 끝 과제 하나뿐이었음 → 개념별 `:::drill` 6개로 재구성.
+  실습 1~4로 패키지 구조를 만들고, 5는 `internal/` 담장 실험(되돌리기 포함), 6은 도구 4개.
+  실습 2·5는 **컴파일 에러가 정답**이라 학습자가 에러 메시지를 붙여올 것 — 그때 튜터가 확인해준다.
+- 다음: 실습 1~2 에러 메시지 확인 → 실습 3~6 → 마무리 과제 구현 → 검증(`gofmt -l` → `go vet` → `go test`) → 채점 → 이해도 체크 3문항
 
 ## 레슨 진행표
 상태: ⬜미시작 / 🔄진행중 / ✅통과 / 🔁재작업필요
@@ -115,7 +118,7 @@
 ## 환경 재구성 메모
 - **환경**: macOS (arm64) — 프로필상 WSL2였으나 실제는 Mac. 학습에 차이 없음.
 - **Go**: 1.26.4 (설치됨, PATH 정상)
-- **레슨 뷰어**: `pnpm install` → `pnpm dev` → http://localhost:5173 (Node 25 / pnpm 10)
+- **레슨 뷰어**: `pnpm install` → `pnpm dev` → http://localhost:3010 (Node 25 / pnpm 10)
 - **Docker**: 28.1.1 (L24부터 사용)
 - **모듈**: 루트 단일 모듈 `learn-go` (`go.mod`)
 - **Postgres**: 아직 없음 — L24에서 `docker compose up -d db`로 시작 예정

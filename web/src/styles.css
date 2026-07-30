@@ -168,9 +168,6 @@ kbd {
   margin: 0 auto;
   min-width: 0;
 }
-.lesson-wrap .page {
-  margin: 0 0 0 auto;
-}
 
 /* ── 사이드바 ───────────────────────────────────────────────── */
 .sidebar {
@@ -961,6 +958,19 @@ kbd {
   color: var(--check);
 }
 
+/* 실습 — 지금 손을 움직이는 블록이라 좌측 레일로 가장 강하게 잡는다. */
+.callout-drill {
+  border-color: color-mix(in srgb, var(--accent) 34%, transparent);
+  border-left: 3px solid var(--accent);
+}
+.callout-drill .callout-head {
+  background: var(--accent-soft);
+  border-bottom-color: color-mix(in srgb, var(--accent) 22%, transparent);
+}
+.callout-drill .callout-label {
+  color: var(--accent);
+}
+
 .callout-try .callout-head,
 .callout-note .callout-head {
   background: var(--accent-soft);
@@ -1147,9 +1157,6 @@ kbd {
   }
   .toc {
     display: none;
-  }
-  .lesson-wrap .page {
-    margin: 0 auto;
   }
 }
 @media (max-width: 900px) {

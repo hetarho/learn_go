@@ -88,8 +88,9 @@ function CodeBlock({ node }: { node: CodeNode }) {
 }
 
 const CALLOUTS: Record<string, { icon: string; label: string }> = {
+  drill: { icon: '⌨️', label: '실습' },
   spec: { icon: '📝', label: '과제' },
-  gotcha: { icon: '⚠️', label: '어긋나는 지점' },
+  gotcha: { icon: '⚠️', label: '주의' },
   be: { icon: '🧭', label: 'BE 상식' },
   check: { icon: '❓', label: '이해도 체크' },
   try: { icon: '🔬', label: '직접 해보기' },

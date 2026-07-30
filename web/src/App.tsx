@@ -155,7 +155,7 @@ function Home() {
     <article className="page">
       <header className="page-head">
         <p className="eyebrow">Go 백엔드 학습</p>
-        <h1>지금 어디까지 왔나</h1>
+        <h1>학습 현황</h1>
         <p className="lede">
           진행 상태의 정본은 <code>PROGRESS.md</code>예요. 이 화면은 그 파일을 읽어서 보여주기만 해요.
         </p>
@@ -198,13 +198,13 @@ function Home() {
 
       {next && (
         <section className="block">
-          <h2>▶ 다음 세션 시작점</h2>
+          <h2>다음 세션 시작점</h2>
           <Markdown source={next} />
         </section>
       )}
       {doing && (
         <section className="block">
-          <h2>⏸ 진행 중</h2>
+          <h2>진행 중</h2>
           <Markdown source={doing} />
         </section>
       )}
@@ -239,8 +239,8 @@ function LessonView({ lesson }: { lesson: Lesson }) {
         <div className="empty-state">
           <p>이 레슨의 본문은 아직 없어요.</p>
           <p className="muted">
-            튜터가 세션을 시작하면 <code>lessons/{lesson.slug}/LESSON.md</code>가 만들어지고, 이 화면에 바로 나타나요.
-            커리큘럼상 목표와 체크 질문은 <a href="#/curriculum">커리큘럼</a>에서 볼 수 있어요.
+            튜터가 세션을 시작하면 <code>lessons/{lesson.slug}/LESSON.md</code>가 만들어지고 이 화면에 바로 나타나요.
+            이 레슨의 목표와 체크 질문은 <a href="#/curriculum">커리큘럼</a>에 있어요.
           </p>
         </div>
       </article>
@@ -312,7 +312,7 @@ function LessonView({ lesson }: { lesson: Lesson }) {
 
       {toc.length > 2 && (
         <aside className="toc">
-          <p className="toc-label">이 레슨</p>
+          <p className="toc-label">목차</p>
           <ul>
             {toc.map((t) => (
               <li key={t.id} className={`lv-${t.level}`}>
@@ -391,7 +391,7 @@ export default function App() {
             <LessonView lesson={lesson} />
           ) : (
             <article className="page">
-              <h1>없는 레슨이에요</h1>
+              <h1>그런 레슨이 없어요</h1>
               <p>
                 <a href="#/">처음으로</a>
               </p>

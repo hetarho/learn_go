@@ -7,7 +7,8 @@ export default defineConfig({
   root: 'web',
   plugins: [react()],
   server: {
-    port: 5173,
+    port: 3010,
+    strictPort: true,
     open: true,
     fs: { allow: ['..'] },
   },

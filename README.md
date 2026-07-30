@@ -9,7 +9,7 @@ Claude Code 튜터와 함께, **직접 코드를 쓰면서** 진행한다.
 
 ```bash
 pnpm install   # 처음 한 번만
-pnpm dev       # http://localhost:5173
+pnpm dev       # http://localhost:3010
 ```
 
 레슨 본문(`lessons/*/LESSON.md`)을 읽기 좋게 렌더링해준다. 코드 블록에 줄 번호·파일명·복사 버튼이 붙고, TypeScript ↔ Go 대조와 과제 명세·체크 질문이 카드로 나온다.

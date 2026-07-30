@@ -233,6 +233,8 @@ otherapp/             ← myapp/internal/billing 을 import하면 컴파일 에�
 :::drill 5. 담장을 직접 넘어보기
 되돌릴 수 있는 실험이에요. 3단계이고 마지막에 원상복구해요.
 
+이 실습은 터미널에서 디렉토리를 옮겨요. **그러면 에디터의 빨간 줄을 믿으면 안 돼요.** VS Code의 Go 언어 서버(gopls)는 패키지 구조를 캐시해서, 트리가 에디터 밖에서 바뀌면 한동안 옛 정보를 보여줘요. 판정은 항상 터미널의 `go build ./...`로 해요. 어긋나면 `Go: Restart Language Server`로 맞춰요.
+
 **① 안쪽에서 쓰기** — `greet/`를 `internal/greet/`로 옮겨요.
 
 ```bash

@@ -55,7 +55,56 @@
   - dev 서버 로그에 `Could not Fast Refresh ("stripFrontmatter" export is incompatible)`가 반복 출력됨 → 파싱(`markdown-parse.ts`)과 렌더링(`markdown.tsx`)을 분리해 해결. 렌더 모듈이 컴포넌트만 export하게 되니 경계가 깨끗해졌다. 마침 우리가 가르치려는 관심사 분리와 같은 모양이라 구조도 나아졌다.
   - 검증 방법: dev 서버가 변환해 내려주는 모듈을 받아 `registerExportsForReactRefresh` 주입 여부를 확인했다. `markdown.tsx` / `App.tsx` 둘 다 경계 ✓, 로그 경고 0건.
 
-### 다음에 이어갈 것
-- L01 학습자 구현 대기 중. 제출되면 `gofmt -l` → `go vet` → `go test` 순으로 검증하고 6축 채점.
+### L01 채점 (완료)
 
----
+**코드 3.9 / 이해 3 — 통과.** Phase 0 게이트 통과.
+
+| 축 | 점수 | 근거 |
+|---|---|---|
+| correctness | 4 | `gofmt -l` 조용, `go vet` exit 0, `go test` ok, `go run` 출력 확인 |
+| go_idiom | 4 | `greet.Hello` 패키지명 중복 없음, exported/unexported 분리, red flag 0 |
+| boundaries | 4 | `main.go` 가 조립만 함 |
+| readability | 3 | exported `Hello` 에 doc comment 없음 / 파일명 `great.go` 오타(패키지는 `greet`) |
+| error_handling · testability | N/A | L01 범위 밖 (L11 / L07) |
+
+이해도 체크 3문항: 1번 3점(전이) · 2번 2점(설명) · 3번 2점(설명).
+1번은 core 항목이라 3 필요 — `internal/` × 대소문자 2×2 예측을 4개 다 맞혀 도달했다.
+특히 "서브트리 밖 + 소문자"에서 **경로 담장이 이름 담장보다 먼저 걸린다**를 맞혔다.
+
+3번(순환 import가 설계에 주는 영향)은 재질문 3회가 필요했다. 첫 답은 사실 재진술
+("막아버려서 순환하지 않게 막아준다"), 두 번째는 방향만("빌드 전에 설계"),
+세 번째에 "의존성 방향을 미리 정해야 한다"로 도달. `dep-direction` 약점 등록 → L09에서 재확인.
+
+### 학습자가 잡아낸 튜터의 결함 (3건)
+
+이 세션의 실질적 산출물이다. 전부 학습자가 먼저 발견했다.
+
+1. **L01이 `struct`(L05)로 가시성을 설명** — `type Config struct` 코드 블록. const 예시로 교체.
+2. **L01 과제가 분기문(`if`, L03)을 요구** — `Hello("")` → `"안녕하세요, 낯선 분!"`.
+   `greet_test.go` 의 `TestHelloEmptyName` 제거하고 CURRICULUM L03 산출물로 이관.
+3. **`internal/` 실험 증거가 전부 `main.go`** — "main.go 안에서만 쓸 수 있나?"라는
+   합리적 오해를 유발했다. `package main` 이 아닌 파일로 재실험해 위치만이 변수임을 보였다.
+
+이 사고들 때문에 L02~L40 전수 대조를 했고 선행 개념 위반 6건을 더 찾았다(커밋 `eba2529`).
+`tools/check-order.py` 로 기계화 — 다음부터 레슨 집필 후 반드시 돌린다.
+
+### 레슨 구조 개편
+
+개념 5개에 실습이 0개였고 맨 끝에 과제 하나뿐이었다("읽었지만 못 한다" 상태로 끝나는 구조).
+개념별 `:::drill` 6개로 재구성하고, 실습 2·3이 **정반대 결과**(컴파일 에러 / 통과)를 내도록 짰다.
+6개를 스크래치 복제본에서 전부 실행해 검증했고, 그 과정에서 내 실습에도 버그 2건이 있었다.
+- `lessons/_scratch` → Go가 `_` 로 시작하는 디렉토리를 컴파일에서 제외해 internal 위반이 안 났다
+- 실습 1의 `Hello()` 시그니처가 `greet_test.go` 와 어긋나 실습 6의 `go vet` 조건이 성립 불가였다
+
+### 그 외
+
+- 뷰어: 레슨 본문 우측정렬 → 중앙정렬, `:::drill` 콜아웃 추가, `gotcha` 라벨 중복 출력 수정
+- 한국어 윤문: 연결어미 뒤 쉼표 7건, 해요체에 섞인 합니다체 2건, "지금 어디까지 왔나" → "학습 현황"
+- dev 서버 포트 3010 고정
+- gopls 특성 2건을 실습에 반영: 소문자 선택자만 있으면 import 를 지운다 / 터미널로
+  디렉토리를 옮기면 진단이 낡는다 → 판정은 항상 `go build`
+
+### 다음에 이어갈 것
+
+- L02 집필 (zero value). struct 필드 예시 금지 — 그게 L01의 사고였다.
+- 집필 후 `python3 tools/check-order.py --lessons`

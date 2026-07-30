@@ -3,7 +3,7 @@
 FE 6년차 → 회사 Go 백엔드를 "완벽히 이해하며 읽는" 상태까지. 40레슨 + 캡스톤.
 Claude Code 튜터와 함께, **직접 코드를 쓰면서** 진행한다.
 
-**진행률: 0 / 40 (Phase 0 진행 중) · 다음: L01 Go 툴체인, 모듈, 패키지와 가시성**
+**진행률: 1 / 40 (Phase 0 통과) · 다음: L02 변수, 타입, zero value**
 
 ## 학습은 웹 UI로 본다
 
@@ -32,9 +32,18 @@ pnpm dev       # http://localhost:3010
 | `lessons/NN-slug/NOTES.md` | 내 요약 (**학습자만** 쓴다) |
 | `capstone/` | 최종 프로젝트(2 바이너리 미니 서버) |
 | `web/` | 레슨 뷰어 (Vite + React, Go 모듈과 무관) |
+| `tools/` | 학습 상태 출력 + 선행 개념 검사 스크립트 |
+| `.claude/skills/start-study/` | `/start-study` — 세션 재개 스킬 |
 
 ## 이어서 학습하기
-Claude Code를 이 디렉토리에서 열고 튜터 프롬프트를 붙여넣으면, `PROGRESS.md`와 `TUTOR.md`를 읽고 이어서 진행한다.
+Claude Code를 이 디렉토리에서 열고 **`/start-study`** 를 실행한다. 현재 상태를 읽어 상황에 맞는 모드(레슨 집필 / 실습 지원 / 검증·채점 / 이해도 체크)로 바로 들어간다.
+
+상태만 보려면 이것만 돌려도 된다.
+
+```bash
+python3 tools/study-status.py     # 다음 레슨 · 약점 · 환경 점검 · 다음 동작
+python3 tools/check-order.py --lessons   # 안 배운 개념을 먼저 쓴 곳이 있나
+```
 
 ## 로컬 실행
 ```bash

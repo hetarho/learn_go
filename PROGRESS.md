@@ -11,6 +11,8 @@
 | 총 학습 시간 | 1h |
 
 ## 다음 세션 시작점
+- **`/start-study`** 를 실행하면 아래 내용을 자동으로 읽고 상황에 맞는 모드로 들어간다.
+  수동으로 하려면 `python3 tools/study-status.py` 부터.
 - **먼저 읽기**: `TUTOR.md` — 말투 지침(§1)과 `LESSON.md` 작성 형식(§3). **개념마다 `:::drill` 실습을 붙인다**(§3), **레슨을 쓰면 `python3 tools/check-order.py --lessons` 를 돌린다**(§3).
 - **레슨**: L02 · 변수, 타입, zero value (`lessons/02-values/`) — 아직 `LESSON.md` 없음, 집필부터.
 - **첫 할 일**: L02 레슨 집필. zero value 가 주제이고 `struct` 는 L05 이므로 **struct 필드 예시를 쓰지 않는다**(L01에서 실제로 사고 났던 지점).

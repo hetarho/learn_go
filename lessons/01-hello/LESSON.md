@@ -316,7 +316,6 @@ go test ./lessons/01-hello/...
 - **시그니처**: `func Hello(name string) string` — 실습 1에서 만든 그대로예요. 이제 `name`을 실제로 쓰게 만들어요
 - **요구사항**
   - `Hello("Gopher")` → `"안녕하세요, Gopher님!"`
-  - `Hello("")` → `"안녕하세요, 낯선 분!"`
   - 인사말을 조립하는 부분(`~님!` 붙이기)은 **unexported 함수로 분리**한다 (실습 2의 `decorate`를 그대로 쓰면 돼요)
   - `main.go`는 `greet` 패키지를 import해서 `Hello` 결과를 `fmt.Println`으로 출력한다
 - **금지**: 외부 라이브러리 (표준 라이브러리 `fmt`만)
@@ -325,6 +324,8 @@ go test ./lessons/01-hello/...
 :::
 
 테스트 파일은 이미 있어요: `lessons/01-hello/greet/greet_test.go`. 실행 가능한 명세니까 **먼저 읽어보세요.**
+
+빈 이름(`Hello("")`)을 어떻게 처리할지는 여기서 묻지 않아요. 분기문이 필요한데 그건 L03이라서요. 오늘은 가시성만 봐요.
 
 :::details 첫 줄이 막힌다면
 `greet.go`의 첫 줄은 `package greet`, `main.go`의 첫 줄은 `package main`이에요.

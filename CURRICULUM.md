@@ -26,11 +26,11 @@
 ### L02 · 변수, 타입, zero value `02-values`
 - **목표**: `var` vs `:=`, **zero value**(Go에 `undefined` 없음), `string`/`[]byte`/`rune`, 암묵 변환 없음, 상수.
 - **산출물**: 모든 기본 타입의 zero value 출력 + `strconv` 변환.
-- **체크**: "TS `let x: number`는 `undefined`일 수 있는데 Go `var x int`는 왜 아닌가? struct 필드에서 이 차이가 만드는 문제는?"
+- **체크**: "TS `let x: number`는 `undefined`일 수 있는데 Go `var x int`는 왜 아닌가? 그래서 '값이 아직 안 들어왔다'를 표현해야 할 때 Go에서는 무엇이 곤란해지나?" (struct 필드에서 이 문제가 어떻게 터지는지는 L05, 해법은 L06 포인터에서)
 
 ### L03 · 함수, 다중 반환값, 제어 흐름 `03-func-flow`
 - **목표**: `(T, error)` 관례, named return, `if err != nil` 리듬, `if`의 init statement, `for`(유일한 루프), `switch`(fallthrough 없음).
-- **산출물**: `parseAge(s string) (int, error)` 류 3개 + 호출부.
+- **산출물**: `parseAge(s string) (int, error)` 류 3개 + 호출부. **L01에서 넘어온 것**: `greet.Hello("")` → `"안녕하세요, 낯선 분!"` 빈 이름 처리 (분기문이 필요해 L01에서 제외했다).
 - **체크**: "예외 던지기 vs error 반환 — 호출부 모양이 어떻게 다르고, 어느 쪽이 에러를 잊기 쉬운가?"
 
 ### L04 · slice와 map `04-slice-map`
@@ -39,12 +39,12 @@
 - **체크**: "`append` 결과를 재대입하는 이유? nil map에 쓰기 vs nil slice에 append는 각각 어떻게 되나?"
 
 ### L05 · struct와 메서드, 값/포인터 리시버 `05-struct-method`
-- **목표**: struct 리터럴, 메서드 선언, **값 vs 포인터 리시버**, 메서드 셋, 회사 관례(서비스=포인터, 어댑터=값).
+- **목표**: struct 리터럴, 메서드 선언, **값 vs 포인터 리시버**, 메서드 셋, 회사 관례(서비스=포인터, 어댑터=값). **`&`/`*`는 리시버를 설명할 만큼만 최소 도입한다** — "주소를 넘기면 원본이 바뀐다"까지. 포인터를 *왜* 쓰는지와 옵셔널 표현은 L06.
 - **산출물**: 값 리시버가 변경을 잃는 예제 + 포인터로 고친 버전.
 - **체크**: "어댑터는 값 리시버, 서비스는 포인터 리시버인 이유를 각각 추론해봐."
 
 ### L06 · 포인터와 옵셔널 값 `06-pointer`
-- **목표**: `&`/`*`, nil, 포인터를 쓰는 3가지 이유(변경·복사 회피·**옵셔널**), `*time.Time` nil = "없음", nil 역참조 panic. **TS 대응물 없음 → 비유 금지, 메모리 그림으로 천천히.**
+- **목표**: L05에서 문법만 맛본 포인터의 **"왜"**를 여기서 다룬다 — 포인터를 쓰는 3가지 이유(변경·복사 회피·**옵셔널**), nil, `*time.Time` nil = "없음", nil 역참조 panic(구문이 아니라 증상으로만 — `recover`는 L17). **TS 대응물 없음 → 비유 금지, 메모리 그림으로 천천히.**
 - **산출물**: `DeletedAt *time.Time`을 안전하게 다루는 함수.
 - **체크**: "zero `time.Time`으로 미설정 표현 vs `*time.Time` nil — 트레이드오프는? 회사 코드는 둘 다 쓴다, 각각 언제일까?"
 
@@ -68,8 +68,8 @@
 - **체크**: "인터페이스를 구현체 패키지에 두면 어떤 의존 방향 문제가 생기나? 소비자가 선언하면 무엇이 뒤집히나?"
 - **BE**: 도메인이 인프라를 모르게 하는 장치 = ports-and-adapters의 핵심.
 
-### L10 · 인터페이스 임베딩과 표면 조합 `10-iface-embed`
-- **목표**: 인터페이스 안 인터페이스, 작은 것들을 합쳐 "표면" 만들기(회사의 TxSurface), `io.Reader`/`Writer`/`ReadWriter`.
+### L10 · 임베딩과 표면 조합 `10-iface-embed`
+- **목표**: 인터페이스 안 인터페이스, 작은 것들을 합쳐 "표면" 만들기(회사의 TxSurface), `io.Reader`/`Writer`/`ReadWriter`. **struct 임베딩(필드·메서드 승격)도 여기서 짝으로 다룬다** — 상속이 아니라 포함이라는 점, L23에서 JWT claims에 쓴다.
 - **산출물**: `UserReader`+`NoteWriter`를 임베딩한 `TxSurface`와 이를 만족하는 struct 하나.
 - **체크**: "왜 큰 인터페이스를 처음부터 선언하지 않고 임베딩으로 합치는가?"
 
@@ -101,11 +101,11 @@
 
 ### L16 · 검증하는 생성자와 불변식 `16-constructor`
 - **목표**: `NewService(deps) (*Service, error)` — **의존성 누락 시 sentinel error**, unexported 필드 + 생성자 전용 생성으로 "잘못된 상태의 값"을 타입으로 차단.
-- **산출물**: `ServiceDeps` + nil마다 다른 sentinel + 테이블 테스트.
+- **산출물**: `ServiceDeps` + nil마다 다른 sentinel + nil 케이스별 테스트. (테이블 주도 관용구 자체는 L19에서 정식으로 — 여기서는 케이스를 손으로 나열해도 된다.)
 - **체크**: "unexported 필드 + 생성자만 노출하면 무엇을 보장하나? 왜 '패키지 경계로 불변식을 강제한다'인가?"
 
 ### L17 · defer 3패턴과 panic/recover `17-defer-recover`
-- **목표**: defer 실행/인자 평가 시점, ① 리소스 정리 ② `defer tx.Rollback()`(commit 후 no-op) ③ **named return + `defer recover()` → panic을 error로**, panic은 거의 안 쓴다.
+- **목표**: defer 실행/인자 평가 시점, ① 리소스 정리(`f.Close()`) ② **여러 defer의 LIFO 순서** ③ **named return + `defer recover()` → panic을 error로**, panic은 거의 안 쓴다. (`defer tx.Rollback()` 관용구는 트랜잭션을 배운 뒤 L27에서)
 - **산출물**: `safeRun(fn func() error) (err error)` + 테스트.
 - **체크**: "named return 없이 recover만 하면 왜 에러를 전달할 수 없나? 인터셉터의 panic recovery는 어느 패턴인가?"
 
@@ -143,7 +143,7 @@
 - **BE**: 무중단 배포 / CORS는 브라우저가 강제하는 규칙이지 보안 경계가 아니다.
 
 ### L23 · JWT/JWKS 무세션 인증 + mutex TTL 캐시 `23-auth`
-- **목표**: Bearer 파싱, JWT 구조, **공개키 서명 검증**과 JWKS, claims를 struct embedding으로, 인증 미들웨어가 user id를 context에, JWKS를 `sync.RWMutex` + TTL 캐시.
+- **목표**: Bearer 파싱, JWT 구조, **공개키 서명 검증**과 JWKS, claims를 struct 임베딩으로(L10), 인증 미들웨어가 user id를 context에, JWKS를 TTL 캐시. **`sync.RWMutex`가 여기서 처음 나온다** — 이 레포에서 다루는 유일한 동시성 프리미티브이므로 "여러 고루틴이 같은 맵을 읽고 쓴다"부터 짚는다.
 - **산출물**: 인증 미들웨어(fake JWKS 제공자) + 실패 케이스 테이블 테스트 + TTL 캐시.
 - **체크**: "세션/쿠키 vs JWT+JWKS를 서버 상태 관점에서. 서버는 왜 인증 DB 조회가 없나, 그 대가는?"
 - **BE**: JWKS / per-user 격리의 출발점(context의 user id → 이후 모든 쿼리의 `WHERE user_id`).

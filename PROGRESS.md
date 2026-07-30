@@ -23,6 +23,7 @@
   - 명세용 테스트: `lessons/01-hello/greet/greet_test.go`
 - 학습자가 구현할 것: `lessons/01-hello/greet/greet.go` (`Hello` + unexported `decorate`) + `lessons/01-hello/main.go`
 - 완료 조건: `go test ./lessons/01-hello/...` 통과 + `go run ./lessons/01-hello` 실행
+- **명세 수정(2026-07-30)**: `Hello("")` 빈 이름 처리는 분기문(`if`)이 필요해 L01 범위를 벗어남 → `greet_test.go`의 `TestHelloEmptyName` 제거하고 `CURRICULUM.md` L03 산출물로 이관. 학습자가 지적함.
 - **레슨 구조 개편(2026-07-30)**: 개념 5개에 실습이 없어 맨 끝 과제 하나뿐이었음 → 개념별 `:::drill` 6개로 재구성.
   실습 1~4로 패키지 구조를 만들고, 5는 `internal/` 담장 실험(되돌리기 포함), 6은 도구 4개.
   실습 2·5는 **컴파일 에러가 정답**이라 학습자가 에러 메시지를 붙여올 것 — 그때 튜터가 확인해준다.

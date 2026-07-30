@@ -14,14 +14,19 @@
 - **`/start-study`** 를 실행하면 아래 내용을 자동으로 읽고 상황에 맞는 모드로 들어간다.
   수동으로 하려면 `python3 tools/study-status.py` 부터.
 - **먼저 읽기**: `TUTOR.md` — 말투 지침(§1)과 `LESSON.md` 작성 형식(§3). **개념마다 `:::drill` 실습을 붙인다**(§3), **레슨을 쓰면 `python3 tools/check-order.py --lessons` 를 돌린다**(§3).
-- **레슨**: L02 · 변수, 타입, zero value (`lessons/02-values/`) — 아직 `LESSON.md` 없음, 집필부터.
-- **첫 할 일**: L02 레슨 집필. zero value 가 주제이고 `struct` 는 L05 이므로 **struct 필드 예시를 쓰지 않는다**(L01에서 실제로 사고 났던 지점).
+- **레슨**: L02 · 변수, 타입, zero value (`lessons/02-values/`) — `LESSON.md` 집필 완료(실습 6개), **학습자 구현 대기**.
+- **첫 할 일**: 학습자 질문 대기(모드 B). 구현이 올라오면 모드 C — `gofmt → go vet → go test → go run → go doc` 순서로 검증.
 - **준비 명령**: `pnpm dev` (레슨 뷰어, :3010), `go build ./...`, `python3 tools/check-order.py --lessons`
 - **주의**: 학습자가 선행 개념 위반을 직접 잡아낸다. 집필 후 검사기를 반드시 돌릴 것.
-- **L01 마무리 남은 것**: readability 피드백 2건(exported doc comment, `great.go` → `greet.go`)을 학습자가 반영할지 미정.
+- **L01 마무리 남은 것**: `great.go` → `greet.go` 파일명 오타는 학습자가 반영할지 미정. doc comment 지적은 L02 과제 요구사항으로 흡수했다(`go doc` 이 판정 명령).
 
 ## 진행 중 (세션이 중간에 끊긴 경우만 채움)
-- 없음 — L01 완료.
+- **L02 진행중.** `LESSON.md` + `values/values_test.go`(튜터 제시 명세)까지 올라갔다.
+  학습자가 만들 파일은 `lessons/02-values/main.go` 와 `lessons/02-values/values/values.go` 두 개다.
+- 지금 `go test`/`go vet` 이 `undefined: Label` 로 실패하는 건 **정상**이다 — 구현 전 상태.
+  `go build ./...` 는 통과한다(테스트 파일만 있는 패키지는 build 대상이 아니다). L01 때와 같은 중간 상태.
+- 검증된 것: 참조 해답이 L02 범위 문법(분기문·루프·다중 반환 없음)만으로 테스트를 통과한다.
+  실습 6개의 약속된 출력·에러 메시지도 전부 실제로 재현 확인했다.
 
 ## 레슨 진행표
 상태: ⬜미시작 / 🔄진행중 / ✅통과 / 🔁재작업필요
@@ -34,7 +39,7 @@
 ### Phase 1 — 기본 문법
 | # | 레슨 | 상태 | 코드 | 이해 | 날짜 |
 |---|---|---|---|---|---|
-| L02 | 변수·타입·zero value | ⬜ | - | - | - |
+| L02 | 변수·타입·zero value | 🔄 | - | - | - |
 | L03 | 함수·다중 반환·제어 흐름 | ⬜ | - | - | - |
 | L04 | slice와 map | ⬜ | - | - | - |
 | L05 | struct·메서드·리시버 | ⬜ | - | - | - |
@@ -103,7 +108,7 @@
 | 태그 | 내용 | 최초 | 마지막 복습 | 상태 |
 |---|---|---|---|---|
 | dep-direction | 순환 import가 **설계에 주는 영향**을 묻자 사실 재진술에 머물렀다(3회 재질문 후 도달). L09 consumer-owned ports에서 방향 뒤집기로 재확인 | L01 | - | 관찰 |
-| doc-comment | exported 심볼에 doc comment 없음. `go doc`에 아무것도 안 나온다 | L01 | - | 관찰 |
+| doc-comment | exported 심볼에 doc comment 없음. `go doc`에 아무것도 안 나온다 | L01 | L02 (과제 요구사항 + `go doc` 판정) | 재출제 |
 
 ## 강점 / 빠르게 넘어간 것
 - **레슨·과제의 결함을 직접 잡아낸다.** L01의 struct(L05) 선행 참조, 과제의 분기문(L03) 요구, 실험 증거가 `main.go`로만 이뤄져 있던 점까지 세 번 지적했다. 튜터가 놓친 것들이다.
